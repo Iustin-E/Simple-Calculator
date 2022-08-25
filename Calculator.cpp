@@ -9,6 +9,7 @@ bool checkParantheses(string expression);
 double SolvePostfix(string expression);
 
 string postfixConvertor(string expression);				// DOAR PT TEST - A SE STERGE
+string convertIntToString(int nr);
 
 void Load();
 
@@ -34,7 +35,7 @@ void Load() {
 	cout << "  Introdu o expresie formata din numere si operatori (+, -, *, /, ^) \n";
 	cout << "  si apasa ENTER!\n";
 	cout << "---------------------------------------------------------------------\n";
-	cout << "  1) Merge momentan doar cu numere de O SINGURA cifra!\n";
+	cout << "  1) Momentan nu merge sa introduci numere CU VIRGULA!\n";
 	cout << "  2) Merge momentan doar cu numere POZITIVE!\n";
 	cout << "  3) Nu merge cu litere! Daca se introduce o litera se converteste in\n";
 	cout << "     ASCII!\n";
@@ -127,14 +128,35 @@ bool isOperand(char a) {
 	return false;
 }
 
+string convertIntToString(int nr) {
+	string charnr = "";
+	int ogl = 0;
+	while (nr) {
+		ogl = ogl * 10 + nr%10;
+		nr /= 10;
+	}
+	while (ogl) {
+		charnr += (ogl % 10)+'0';
+		ogl /= 10;
+	}
+	return charnr;
+}
+
 string postfixConvertor(string expression) {
 	string postfix = "";
 	stack <char> S;
 	for (int i = 0; i < expression.length(); i++) {
 		if (expression[i] == ' ') continue;
-		if (isOperand(expression[i])) 	// daca este cifra/litera			
-			postfix += expression[i];	// nu merge cu mai multe cifre si sa formez un numar. imi retunreaza un cod ascii
-										// care este convertit in litera
+		if (isOperand(expression[i])){
+			int nr=0;
+			while (isDigit(expression[i])) {		// iau un string si il convertesc in int
+				nr = nr * 10 + (expression[i] - '0');			// NU CONVERTESTE BINE FUTU I MORTII MAMII LUI
+				i++;
+			}
+			i--;
+			postfix += convertIntToString(nr);
+			postfix += ' ';
+		} 			
 								
 		// PARANTEZE
 		else if (isOpener(expression[i]))		// daca este paranteza deschisa
@@ -169,8 +191,14 @@ double SolvePostfix(string expression) {
 	double res = 0;
 	for (int i = 0; i < expression.length(); i++) {
 		if (expression[i] == ' ') continue;
-		if (isOperand(expression[i])) {	// daca este nr/litera -> stack
-			S.push(expression[i]-'0');
+		if (isOperand(expression[i])) {
+			int nr = 0;
+			while (isDigit(expression[i])) {
+				nr = nr * 10 + (expression[i] - '0');			
+				i++;
+			}
+			i--;
+			S.push(nr);
 			//cout << "STACK+ : " << expression[i] << endl;
 		}
 		else if (isOperator(expression[i])) {
@@ -182,7 +210,7 @@ double SolvePostfix(string expression) {
 			res+=Solve(op1, op2, expression[i]);
 			cout << "REZOLVAT : " << op1 << expression[i] << op2 << "=" << res << endl;
 			S.push(res);
-			cout << "Inlocuim expresia " << op1 << expression[i] << op2 << " cu rezultatul : " << res << endl;
+			cout << "Inlocuim expresia " << op1 << expression[i] << op2 << " cu rezultatul : " << res << endl << endl;
 		}
 	}
 	return res;
