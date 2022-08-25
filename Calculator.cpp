@@ -8,8 +8,7 @@ bool checkParantheses(string expression);
 
 double SolvePostfix(string expression);
 
-string postfixConvertor(string expression);				// DOAR PT TEST - A SE STERGE
-string convertIntToString(int nr);
+string postfixConvertor(string expression);	
 
 void Load();
 
@@ -149,8 +148,8 @@ string postfixConvertor(string expression) {
 		if (expression[i] == ' ') continue;
 		if (isOperand(expression[i])){
 			int nr=0;
-			while (isDigit(expression[i])) {		// iau un string si il convertesc in int
-				nr = nr * 10 + (expression[i] - '0');			// NU CONVERTESTE BINE FUTU I MORTII MAMII LUI
+			while (isDigit(expression[i])) {
+				nr = nr * 10 + (expression[i] - '0');
 				i++;
 			}
 			i--;
@@ -184,7 +183,13 @@ string postfixConvertor(string expression) {
 	return postfix;
 }
 
-double Solve(double o1, double o2, char ex);
+double Solve(double o1, double o2, char ex) {
+	if (ex == '+') return o1 + o2;
+	else if (ex == '-') return o1 - o2;
+	else if (ex == '*') return o1 * o2;
+	else if (ex == '/') return o1 / o2;
+	else if (ex == '^') return pow(o1, o2);
+}
 
 double SolvePostfix(string expression) {
 	stack <double> S;
@@ -199,7 +204,6 @@ double SolvePostfix(string expression) {
 			}
 			i--;
 			S.push(nr);
-			//cout << "STACK+ : " << expression[i] << endl;
 		}
 		else if (isOperator(expression[i])) {
 			res = 0;
@@ -216,11 +220,3 @@ double SolvePostfix(string expression) {
 	return res;
 }
 
-
-double Solve(double o1, double o2, char ex) {
-	if (ex == '+') return o1 + o2;
-	else if (ex == '-') return o1 - o2;
-	else if (ex == '*') return o1 * o2;
-	else if (ex == '/') return o1 / o2;
-	else if (ex == '^') return pow(o1, o2);
-}
