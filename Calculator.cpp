@@ -6,12 +6,15 @@ using namespace std;
 
 bool checkParantheses(string expression);
 
-int SolvePostfix(string expression);
+double SolvePostfix(string expression);
 
 string postfixConvertor(string expression);				// DOAR PT TEST - A SE STERGE
 
+void Load();
+
 int main() {
 	string expression;
+	Load();
 	cout << "Introdu o expresie: ";
 	getline(cin, expression);
 	while(!checkParantheses(expression)) {
@@ -20,11 +23,23 @@ int main() {
 	}
 	string postfix = postfixConvertor(expression);
 	cout << "Postfix: " << postfix << endl;
-	int result = SolvePostfix(expression);
+	double result = SolvePostfix(postfix);
 	cout << result;
 }
 
-
+void Load() {
+	cout << "---------------------------------------------------------------------\n";
+	cout << "                           CALCULATOR\n";
+	cout << "---------------------------------------------------------------------\n";
+	cout << "  Introdu o expresie formata din numere si operatori (+, -, *, /, ^) \n";
+	cout << "  si apasa ENTER!\n";
+	cout << "---------------------------------------------------------------------\n";
+	cout << "  1) Merge momentan doar cu numere de O SINGURA cifra!\n";
+	cout << "  2) Merge momentan doar cu numere POZITIVE!\n";
+	cout << "  3) Nu merge cu litere! Daca se introduce o litera se converteste in\n";
+	cout << "     ASCII!\n";
+	cout << "---------------------------------------------------------------------\n";
+}
 
 bool isOpener(char a) {
 	if (a == '(' || a == '[' || a == '{')
@@ -147,3 +162,37 @@ string postfixConvertor(string expression) {
 	return postfix;
 }
 
+double Solve(double o1, double o2, char ex);
+
+double SolvePostfix(string expression) {
+	stack <double> S;
+	double res = 0;
+	for (int i = 0; i < expression.length(); i++) {
+		if (expression[i] == ' ') continue;
+		if (isOperand(expression[i])) {	// daca este nr/litera -> stack
+			S.push(expression[i]-'0');
+			//cout << "STACK+ : " << expression[i] << endl;
+		}
+		else if (isOperator(expression[i])) {
+			res = 0;
+			double op2 = S.top();
+			S.pop();
+			double op1 = S.top();
+			S.pop();
+			res+=Solve(op1, op2, expression[i]);
+			cout << "REZOLVAT : " << op1 << expression[i] << op2 << "=" << res << endl;
+			S.push(res);
+			cout << "Inlocuim expresia " << op1 << expression[i] << op2 << " cu rezultatul : " << res << endl;
+		}
+	}
+	return res;
+}
+
+
+double Solve(double o1, double o2, char ex) {
+	if (ex == '+') return o1 + o2;
+	else if (ex == '-') return o1 - o2;
+	else if (ex == '*') return o1 * o2;
+	else if (ex == '/') return o1 / o2;
+	else if (ex == '^') return pow(o1, o2);
+}
