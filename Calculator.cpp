@@ -34,13 +34,12 @@ void Load() {
 	cout << "  Introdu o expresie formata din numere si operatori (+, -, *, /, ^) \n";
 	cout << "  si apasa ENTER!\n";
 	cout << "---------------------------------------------------------------------\n";
-	cout << "  1) KNOWN BUGS:\n";
+	cout << "            KNOWN BUGS:\n";
 	cout << "  1) Momentan nu merge sa introduci numere CU VIRGULA!\n";
 	cout << "  2) Merge momentan doar cu numere POZITIVE!\n";
 	cout << "  3) Nu merge cu litere! Daca se introduce o litera se converteste in\n";
 	cout << "     ASCII!\n";
 	cout << "  4) Merge DOAR cu paranteze rotunde!\n";
-	cout << "  4) Nu merge daca un numar are la final '0'!\n";
 	cout << "---------------------------------------------------------------------\n";
 }
 
@@ -132,14 +131,14 @@ bool isOperand(char a) {
 
 string convertIntToString(int nr) {
 	string charnr = "";
-	int ogl = 0;
+	stack <char> S;
 	while (nr) {
-		ogl = ogl * 10 + nr%10;
+		S.push((nr % 10)+'0');
 		nr /= 10;
 	}
-	while (ogl) {
-		charnr += (ogl % 10)+'0';
-		ogl /= 10;
+	while (!S.empty()) {
+		charnr += S.top();
+		S.pop();
 	}
 	return charnr;
 }
