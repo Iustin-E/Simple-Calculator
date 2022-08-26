@@ -22,7 +22,7 @@ int main() {
 		getline(cin, expression);
 	}
 	string postfix = postfixConvertor(expression);
-	cout << "Postfix: " << postfix << endl;
+	cout << "Postfix: " << postfix << endl << endl;
 	double result = SolvePostfix(postfix);
 	cout << result;
 }
@@ -34,13 +34,12 @@ void Load() {
 	cout << "  Introdu o expresie formata din numere si operatori (+, -, *, /, ^) \n";
 	cout << "  si apasa ENTER!\n";
 	cout << "---------------------------------------------------------------------\n";
-	cout << "  1) KNOWN BUGS:\n";
 	cout << "  1) Momentan nu merge sa introduci numere CU VIRGULA!\n";
-	cout << "  2) Merge momentan doar cu numere POZITIVE!\n";
-	cout << "  3) Nu merge cu litere! Daca se introduce o litera se converteste in\n";
-	cout << "     ASCII!\n";
+	cout << "  2) Merge momentan sa introduci doar cu numere POZITIVE!\n";
+	cout << "     * pt numere negative se poate introduce o scadere din care sa\n";
+	cout << "       rezulte un numar negativ (ex: 1-5 = -4) \n";
+	cout << "  3) Nu merge cu LITERE\n";
 	cout << "  4) Merge DOAR cu paranteze rotunde!\n";
-	cout << "  4) Nu merge daca un numar are la final '0'!\n";
 	cout << "---------------------------------------------------------------------\n";
 }
 
@@ -122,24 +121,19 @@ bool isHigher(char a, char b) {
 	return w1 > w2 ? true : false;
 }
 
-bool isOperand(char a) {
-	if (a >= 'a' && a <= 'z' ||
-		a >= 'A' && a <= 'Z' ||
-		a >= '0' && a <= '9')
-		return true;
-	return false;
-}
-
 string convertIntToString(int nr) {
 	string charnr = "";
-	int ogl = 0;
+	stack <char> S;
+	if (nr == 0) {
+		return "0";
+	}
 	while (nr) {
-		ogl = ogl * 10 + nr%10;
+		S.push((nr % 10)+'0');
 		nr /= 10;
 	}
-	while (ogl) {
-		charnr += (ogl % 10)+'0';
-		ogl /= 10;
+	while (!S.empty()) {
+		charnr += S.top();
+		S.pop();
 	}
 	return charnr;
 }
@@ -149,7 +143,7 @@ string postfixConvertor(string expression) {
 	stack <char> S;
 	for (int i = 0; i < expression.length(); i++) {
 		if (expression[i] == ' ') continue;
-		if (isOperand(expression[i])){
+		if (isDigit(expression[i])){
 			int nr=0;
 			while (isDigit(expression[i])) {
 				nr = nr * 10 + (expression[i] - '0');
@@ -199,7 +193,7 @@ double SolvePostfix(string expression) {
 	double res = 0;
 	for (int i = 0; i < expression.length(); i++) {
 		if (expression[i] == ' ') continue;
-		if (isOperand(expression[i])) {
+		if (isDigit(expression[i])) {
 			int nr = 0;
 			while (isDigit(expression[i])) {
 				nr = nr * 10 + (expression[i] - '0');			
@@ -215,7 +209,7 @@ double SolvePostfix(string expression) {
 			double op1 = S.top();
 			S.pop();
 			res+=Solve(op1, op2, expression[i]);
-			cout << "REZOLVAT : " << op1 << expression[i] << op2 << "=" << res << endl;
+			cout << "Rezolvam : " << op1 << expression[i] << op2 << "=" << res << endl;
 			S.push(res);
 			cout << "Inlocuim expresia " << op1 << expression[i] << op2 << " cu rezultatul : " << res << endl << endl;
 		}
